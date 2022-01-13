@@ -7,6 +7,7 @@ using std::string;
 
 typedef unsigned short us;
 
+
 class Node {
 public:
     int value;
