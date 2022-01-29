@@ -1,0 +1,1 @@
+Ana,Julio,Sara,Laura,Silvia,Pedro,nullptr,nullptr,nullptr,Juan,Oscar,Maria,Tulio,nullptr,nullptr,Willy,Luis
