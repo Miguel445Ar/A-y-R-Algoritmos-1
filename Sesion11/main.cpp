@@ -10,7 +10,7 @@ class Sorting {
     size_t size;
 public:
     Sorting(T* arr, size_t size): arr(arr), size(size){}
-    ~Sorting(){ delete[] arr;}
+    ~Sorting(){ arr = nullptr;}
     void print(){
         for(size_t i = 0; i<size; ++i)
             cout << arr[i] << " ";
