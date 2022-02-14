@@ -166,7 +166,7 @@ public:
             for (int i = 0; i < s2.size(); ++i) {
                 if (s2[i] == -2) {
                     if (i - 1 >= 0 && i - 2 >= 0) {
-                        if (s2[i - 1] != -2 && s2[i - 1] != -2) {
+                        if (s2[i - 1] != -2 && s2[i - 2] != -2) {
                             int first = i - 1;
                             int second = i - 2;
                             s2[i] = max(s2[first], s2[second]) + 1;
@@ -197,7 +197,7 @@ public:
             for (int i = 0; i < s2.size(); ++i) {
                 if (s2[i] == -2) {
                     if (i - 1 >= 0 && i - 2 >= 0) {
-                        if (s2[i - 1] != -2 && s2[i - 1] != -2) {
+                        if (s2[i - 1] != -2 && s2[i - 2] != -2) {
                             int first = i - 1;
                             int second = i - 2;
                             s2[i] = max(s2[first], s2[second]) + 1;
