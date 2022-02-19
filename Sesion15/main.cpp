@@ -9,6 +9,7 @@ using std::function;
 using std::stack;
 using std::max;
 using std::cin;
+using std::pair;
 
 
 template<class T>
@@ -32,6 +33,10 @@ public:
     Tree(function<void(T)> show, function<bool(T, T)> comp, function<bool(T, T)> equals) : show(show), comp(comp), equals(equals) {
         root = nullptr;
         size = 0;
+    }
+    ~Tree(){
+        while (size > 0)
+            eraseNode(root); 
     }
     void insert(T value) {
         _insert(root, value, nullptr);
@@ -159,24 +164,19 @@ public:
     }
 
     int HeightWithoutRecursion() {
+        if(!root)
+            return -1;
         stack<Node<T>*>* s = new stack<Node<T>*>;
         vector<int> s2;
         Node<T>* current = root;
         while (current != nullptr || s->empty() == false) {
-            for (int i = 0; i < s2.size(); ++i) {
-                if (s2[i] == -2) {
-                    if (i - 1 >= 0 && i - 2 >= 0) {
-                        if (s2[i - 1] != -2 && s2[i - 2] != -2) {
-                            int first = i - 1;
-                            int second = i - 2;
-                            s2[i] = max(s2[first], s2[second]) + 1;
-                            s2.erase(s2.begin() + first);
-                            s2.erase(s2.begin() + second);
-                            break;
-                        }
-                    }
-                    break;
+            while(s2.size() >= 2){
+                if (s2[0] != -2 && s2[1] != -2 && s2[2] == -2) {
+                    s2[2] = max(s2[0], s2[1]) + 1;
+                    s2.erase(s2.begin());
+                    s2.erase(s2.begin());
                 }
+                else break;
             }
             while (current != nullptr) {
                 s->push(current);
@@ -193,27 +193,36 @@ public:
             s->pop();
             current = current->right;
         }
-        while (s2.size() > 1) {
-            for (int i = 0; i < s2.size(); ++i) {
-                if (s2[i] == -2) {
-                    if (i - 1 >= 0 && i - 2 >= 0) {
-                        if (s2[i - 1] != -2 && s2[i - 2] != -2) {
-                            int first = i - 1;
-                            int second = i - 2;
-                            s2[i] = max(s2[first], s2[second]) + 1;
-                            s2.erase(s2.begin() + first);
-                            s2.erase(s2.begin() + second);
-                            break;
-                        }
-                    }
-                    break;
-                }
+        while(s2.size() >= 2){
+            if (s2[0] != -2 && s2[1] != -2 && s2[2] == -2) {
+                s2[2] = max(s2[0], s2[1]) + 1;
+                s2.erase(s2.begin());
+                s2.erase(s2.begin());
             }
+            else break;
         }
         int h = s2[0];
         s2.clear();
         delete s;
         return s2[0];
+    }
+    void IterativePostOrder() {
+        stack<pair<Node<T>*, int>*>* s = new stack<pair<Node<T>*, int>*>;
+        Node<T>* current = root;
+        while (current || !s->empty()) {
+            while (current != nullptr) {
+                s->push(new pair<Node<T>*, int>(current, 1));
+                current = current->left;
+            }
+            if (s->top()->second == 2) {
+                cout << s->top()->first->value << " ";
+                s->pop();
+                continue;
+            }
+            s->top()->second = 2;
+            current = s->top()->first->right;
+        }
+        delete s;
     }
 private:
     void eraseNode(Node<T>* e) {
@@ -348,16 +357,18 @@ int main() {
     tree->IterativeInsertion(14);
     tree->IterativeInsertion(2);
     tree->IterativeInsertion(6);
-    tree->IterativeInsertion(8);
+    tree->IterativeInsertion(4);
     cout << "\n";
     tree->IterativePreOrder();
     cout << "\nThe 7th element in the tree is " << tree->KthElement(7) << "\n";
     cout << "\nThe 7th element in the tree is (with recursion) " << tree->kthElementRecursive(7) << "\n";
-    tree->IterativeErasing(5);
+    //tree->IterativeErasing(5);
     cout << "\n";
     tree->IterativePreOrder();
     cout << "\nThe height of the tree is " << tree->height() << "\n";
     cout << "\nThe height of the tree (without recursion) is " << tree->HeightWithoutRecursion() << "\n";
+    cout << "\n";
+    tree->IterativePostOrder();
     delete tree;
     return 0;
 }
