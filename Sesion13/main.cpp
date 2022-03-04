@@ -33,8 +33,9 @@ class HashTable {
     size_t capacity;
     size_t size;
     function<void(T)> show;
+    function<T(void)> defaultValue;
 public:
-    HashTable(size_t capacity, function<void(T)> show): capacity(capacity), show(show) {
+    HashTable(size_t capacity, function<void(T)> show, function<T(void)> defaultValue): capacity(capacity), show(show), defaultValue(defaultValue) {
         ht = new list<Elem<T>*>*[capacity];
         for(size_t i = 0; i < capacity; ++i)
             ht[i] = nullptr;
@@ -89,33 +90,30 @@ public:
                 if(elem->getKey() == key)
                     return elem->getValue();
             }
-        return T();
+        return defaultValue();
     }
-    void erase(string key, function<void(list<Elem<T>*>*,string)> erase){
+    void erase(string key){
         size_t index = HashFunction(key);
         if(ht[index] != nullptr){
-            erase(ht[index],key);
+            auto it = ht[index]->begin();
+            for(it; it != ht[index]->end(); ++it){
+                if((*it)->getKey() == key){
+                    ht[index]->erase(it);
+                    break;
+                }
+            }
         }
     }
 };
 
 
 int main(){
-    auto erase = [](list<Elem<int>*>* lista, string key) -> void {
-        list<Elem<int>*>::iterator it = lista->begin();
-        for(it; it != lista->end(); ++it){
-            if((*it)->getKey() == key){
-                lista->erase(it);
-                break;
-            }
-        }
-    };
-    HashTable<int>* ht = new HashTable<int>(10,[](int a) -> void {cout << a;});
+    HashTable<int>* ht = new HashTable<int>(10,[](int a) -> void {cout << a;},[]()-> int { return -10000;});
     ht->insert("Hola",8);
     ht->insert("aloH",10);
     ht->print();
     cout << "\n" << ht->get("aloH") << "\n";
-    ht->erase("Hola",erase);
+    ht->erase("Hola");
     ht->print();
     cout << "\n" << ht->get("Hola") << "\n";
     delete ht;
